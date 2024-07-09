@@ -1,12 +1,13 @@
 import {
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Delivery } from './Delivery';
+import { Delivery } from './delivery.entity';
 
 @Entity('trucks')
 export class Truck {
@@ -33,6 +34,9 @@ export class Truck {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @DeleteDateColumn()
+  deletedAt: Date;
 
   @OneToMany(() => Delivery, (delivery) => delivery.truck)
   deliveries: Delivery[];
