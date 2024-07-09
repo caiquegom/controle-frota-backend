@@ -1,17 +1,15 @@
-import express, { Express, Request, Response } from 'express';
+import express, { Express } from 'express';
 import { AppDataSource } from './data-source';
+import router from './routes';
 
 AppDataSource.initialize().then(() => {
   const SERVER_PORT = process.env.SERVER_PORT;
   const app: Express = express();
 
   app.use(express.json());
-
-  app.get('/', (req: Request, res: Response) => {
-    return res.json('tudo certo');
-  });
+  app.use('/api', router);
 
   app.listen(SERVER_PORT, () => {
-    console.log('Server rodando em http://localhost:3000');
+    console.log(`Server rodando em http://localhost:${SERVER_PORT}`);
   });
 });

@@ -1,5 +1,7 @@
 import {
   Column,
+  CreateDateColumn,
+  DeleteDateColumn,
   Driver,
   Entity,
   JoinColumn,
@@ -7,10 +9,10 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Cargo } from './Cargo';
-import { Region } from './Region';
-import { Truck } from './Truck';
-import { User } from './User';
+import { Cargo } from './cargo.entity';
+import { Region } from './region.entity';
+import { Truck } from './truck.entity';
+import { User } from './user.entity';
 
 enum DeliveryStatus {
   PENDING = 'PENDING',
@@ -58,13 +60,13 @@ export class Delivery {
   @Column({ type: 'boolean' })
   isValuable: boolean;
 
-  @Column({ type: 'timestamp' })
+  @CreateDateColumn()
   createdAt: Date;
 
   @Column({ type: 'timestamp' })
   startedAt: Date;
 
-  @Column({ type: 'timestamp' })
+  @DeleteDateColumn()
   deletedAt: Date;
 
   @Column({ type: 'timestamp' })
