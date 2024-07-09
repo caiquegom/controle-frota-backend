@@ -1,16 +1,16 @@
 import { validate } from 'class-validator';
 import { Request, Response } from 'express';
-import { CreateCargoDTO, UpdateCargoDTO } from '../dto/cargo.dto';
-import { cargoRepository } from '../repositories/cargo.repository';
+import { CreateRegionDTO } from '../dto/region.dto';
+import { regionRepository } from '../repositories/region.repository';
 import { formatValidatorErrors } from '../utils/dataValidation';
 
-class CargoController {
+class RegionController {
   async index(req: Request, res: Response) {
     try {
-      const cargosList = await cargoRepository.find({ withDeleted: false });
+      const regionList = await regionRepository.find({ withDeleted: false });
       return res.status(200).json({
         status: 'success',
-        data: cargosList,
+        data: regionList,
       });
     } catch (err) {
       return res.status(500).json({
@@ -21,26 +21,26 @@ class CargoController {
   }
 
   async show(req: Request, res: Response) {
-    const cargoId = req.params.id;
+    const regionId = req.params.id;
 
     try {
-      const cargo = await cargoRepository.findOne({
+      const region = await regionRepository.findOne({
         where: {
-          id: Number(cargoId),
+          id: Number(regionId),
         },
         withDeleted: false,
       });
 
-      if (!cargo) {
+      if (!region) {
         return res.status(404).json({
           status: 'error',
-          message: 'Cargo not found',
+          message: 'Region not found',
         });
       }
 
       return res.status(200).json({
         status: 'success',
-        data: cargo,
+        data: region,
       });
     } catch (err) {
       return res.status(500).json({
@@ -51,13 +51,12 @@ class CargoController {
   }
 
   async store(req: Request, res: Response) {
-    const { name, type, description } = req.body;
-    const createCargoDTO = new CreateCargoDTO();
-    createCargoDTO.name = name;
-    createCargoDTO.type = type;
-    createCargoDTO.description = description;
+    const { name, tax } = req.body;
+    const createRegionDTO = new CreateRegionDTO();
+    createRegionDTO.name = name;
+    createRegionDTO.tax = tax;
 
-    const errors = await validate(createCargoDTO);
+    const errors = await validate(createRegionDTO);
     if (errors.length >= 1) {
       return res.status(404).json({
         status: 'error',
@@ -66,15 +65,14 @@ class CargoController {
     }
 
     try {
-      const newCargo = cargoRepository.create({
+      const newRegion = regionRepository.create({
         name,
-        type,
-        description,
+        tax,
       });
-      cargoRepository.save(newCargo);
+      regionRepository.save(newRegion);
       return res.status(201).json({
         status: 'success',
-        data: newCargo,
+        data: newRegion,
       });
     } catch (err) {
       return res.status(500).json({
@@ -85,15 +83,14 @@ class CargoController {
   }
 
   async update(req: Request, res: Response) {
-    const cargoId = req.params.id;
-    const { name, type, description } = req.body;
+    const regionId = req.params.id;
+    const { name, tax } = req.body;
 
-    const updateCargoDTO = new UpdateCargoDTO();
-    updateCargoDTO.name = name;
-    updateCargoDTO.type = type;
-    updateCargoDTO.description = description;
+    const createRegionDTO = new CreateRegionDTO();
+    createRegionDTO.name = name;
+    createRegionDTO.tax = tax;
 
-    const errors = await validate(updateCargoDTO);
+    const errors = await validate(createRegionDTO);
     if (errors.length >= 1) {
       return res.status(404).json({
         status: 'error',
@@ -102,27 +99,26 @@ class CargoController {
     }
 
     try {
-      const cargo = await cargoRepository.findOne({
-        where: { id: Number(cargoId) },
+      const region = await regionRepository.findOne({
+        where: { id: Number(regionId) },
         withDeleted: false,
       });
 
-      if (!cargo) {
+      if (!region) {
         return res.status(404).json({
           status: 'error',
-          message: 'Cargo not found',
+          message: 'Region not found',
         });
       }
 
-      const editedCargo = await cargoRepository.save({
-        id: Number(cargoId),
-        name: name,
-        type,
-        description,
+      const editedRegion = await regionRepository.save({
+        id: Number(regionId),
+        name,
+        tax,
       });
       return res.status(201).json({
         status: 'success',
-        data: editedCargo,
+        data: editedRegion,
       });
     } catch (err) {
       return res.status(500).json({
@@ -133,27 +129,27 @@ class CargoController {
   }
 
   async delete(req: Request, res: Response) {
-    const cargoId = req.params.id;
+    const regionId = req.params.id;
 
     try {
-      const cargo = await cargoRepository.findOne({
+      const region = await regionRepository.findOne({
         where: {
-          id: Number(cargoId),
+          id: Number(regionId),
         },
         withDeleted: false,
       });
 
-      if (!cargo) {
+      if (!region) {
         return res.status(404).json({
           status: 'error',
-          message: 'Cargo not found',
+          message: 'Region not found',
         });
       }
 
-      await cargoRepository.softDelete({ id: Number(cargoId) });
+      await regionRepository.softDelete({ id: Number(regionId) });
       return res.status(200).json({
         status: 'success',
-        data: 'Cargo deleted',
+        data: 'Region deleted',
       });
     } catch (err) {
       return res.status(500).json({
@@ -164,4 +160,4 @@ class CargoController {
   }
 }
 
-export default new CargoController();
+export default new RegionController();
