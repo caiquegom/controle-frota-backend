@@ -15,8 +15,6 @@ export class CreateCargoDTO {
 }
 
 export class UpdateCargoDTO {
-  id?: number;
-
   @IsNotEmpty()
   @IsString()
   name: string;
