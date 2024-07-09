@@ -1,4 +1,4 @@
-import { IsDecimal, IsNotEmpty, IsPositive, IsString } from 'class-validator';
+import { IsNotEmpty, IsString, Max, Min } from 'class-validator';
 
 export class CreateRegionDTO {
   @IsNotEmpty()
@@ -6,8 +6,8 @@ export class CreateRegionDTO {
   name: string;
 
   @IsNotEmpty()
-  @IsDecimal()
-  @IsPositive()
+  @Min(0)
+  @Max(1)
   tax: number;
 }
 
@@ -17,7 +17,7 @@ export class UpdateRegionDTO {
   name: string;
 
   @IsNotEmpty()
-  @IsDecimal()
-  @IsPositive()
+  @Min(0)
+  @Max(1)
   tax: number;
 }

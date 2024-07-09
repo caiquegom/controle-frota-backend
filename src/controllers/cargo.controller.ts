@@ -114,7 +114,7 @@ class CargoController {
         });
       }
 
-      const newCargo = await cargoRepository.save({
+      const editedCargo = await cargoRepository.save({
         id: Number(cargoId),
         name: name,
         type,
@@ -122,7 +122,7 @@ class CargoController {
       });
       return res.status(201).json({
         status: 'success',
-        data: newCargo,
+        data: editedCargo,
       });
     } catch (err) {
       return res.status(500).json({
