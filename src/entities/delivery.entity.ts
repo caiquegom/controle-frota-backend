@@ -2,7 +2,6 @@ import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
-  Driver,
   Entity,
   JoinColumn,
   ManyToOne,
@@ -10,9 +9,9 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Cargo } from './cargo.entity';
+import { Driver } from './driver.entity';
 import { Region } from './region.entity';
 import { Truck } from './truck.entity';
-import { User } from './user.entity';
 
 enum DeliveryStatus {
   PENDING = 'PENDING',
@@ -33,7 +32,7 @@ export class Delivery {
   @JoinColumn({ name: 'truck_id' })
   truck: Truck;
 
-  @ManyToOne(() => User, (user) => user.deliveries)
+  @ManyToOne(() => Driver, (driver) => driver.deliveries)
   @JoinColumn({ name: 'driver_id' })
   driver: Driver;
 

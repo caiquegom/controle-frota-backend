@@ -1,6 +1,6 @@
 import { validate } from 'class-validator';
 import { Request, Response } from 'express';
-import { CreateRegionDTO } from '../dto/region.dto';
+import { CreateRegionDTO, UpdateRegionDTO } from '../dto/region.dto';
 import { regionRepository } from '../repositories/region.repository';
 import { formatValidatorErrors } from '../utils/dataValidation';
 
@@ -86,11 +86,11 @@ class RegionController {
     const regionId = req.params.id;
     const { name, tax } = req.body;
 
-    const createRegionDTO = new CreateRegionDTO();
-    createRegionDTO.name = name;
-    createRegionDTO.tax = tax;
+    const updateRegionDTO = new UpdateRegionDTO();
+    updateRegionDTO.name = name;
+    updateRegionDTO.tax = tax;
 
-    const errors = await validate(createRegionDTO);
+    const errors = await validate(updateRegionDTO);
     if (errors.length >= 1) {
       return res.status(404).json({
         status: 'error',
