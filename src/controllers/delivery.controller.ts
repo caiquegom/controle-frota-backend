@@ -2,7 +2,6 @@ import { validate } from 'class-validator';
 import { Request, Response } from 'express';
 import { CreateDeliveryDTO } from '../dto/delivery.dto';
 import { deliveryRepository } from '../repositories/delivery.repository';
-import deliveryService from '../services/delivery.service';
 import { formatValidatorErrors } from '../utils/dataValidation';
 
 class DeliveryController {
@@ -56,18 +55,18 @@ class DeliveryController {
   async store(req: Request, res: Response) {
     const { destinyId, truckId, driverId, cargoId, value, hasInsurance } =
       req.body;
-    const deliveryAttributes = {};
-    const createDeliveryDTO = new CreateDeliveryDTO();
-
-    Object.keys({
+    const deliveryAttributes = {
       destinyId,
       truckId,
       driverId,
       cargoId,
       value,
       hasInsurance,
-    }).forEach((item) => {
-      createDeliveryDTO[item] = requestBody[item];
+    };
+
+    const createDeliveryDTO = new CreateDeliveryDTO();
+    Object.keys(deliveryAttributes).forEach((item) => {
+      createDeliveryDTO[item] = deliveryAttributes[item];
     });
     const errors = await validate(createDeliveryDTO);
 
@@ -79,9 +78,9 @@ class DeliveryController {
     }
 
     try {
-      const isDriverAvailable = await deliveryService.validateDriver(
-        Number(createDeliveryDTO),
-      );
+      // const isTruckAvailable = await deliveryService.validateTruckMonthTrips(
+      //   Number(truckId),
+      // );
     } catch (error) {
       return res.status(500).json({
         status: 'error',

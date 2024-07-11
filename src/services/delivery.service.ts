@@ -3,19 +3,22 @@ import { CargoType } from '../entities/cargo.entity';
 import { cargoRepository } from '../repositories/cargo.repository';
 import { deliveryRepository } from '../repositories/delivery.repository';
 import { regionRepository } from '../repositories/region.repository';
+import { settingsRepository } from '../repositories/settings.repository';
 
 class DeliveryService {
-  async validateDriverTrips(id: number) {
-    const lastDeliveriesToVerify = 4;
+  async validateTruckMonthTrips(id: number) {
     let isAvailable = true;
     let monthReference = null;
 
+    const { truckLimitPerMonth } = await settingsRepository.findOne({
+      where: { id: 1 },
+    });
     const deliveries = await deliveryRepository.find({
       order: {
         createdAt: 'DESC',
       },
       where: {
-        driver: {
+        truck: {
           id: id,
         },
       },
@@ -24,7 +27,7 @@ class DeliveryService {
 
     monthReference = new Date(deliveries[0].deliveryDate).getMonth();
 
-    for (let i = 0; i < lastDeliveriesToVerify - 1; i++) {
+    for (let i = 0; i < truckLimitPerMonth - 1; i++) {
       const deliveryMonth = new Date(deliveries[i].deliveryDate);
 
       if (deliveryMonth !== monthReference) {
