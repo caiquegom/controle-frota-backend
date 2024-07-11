@@ -51,13 +51,14 @@ class TruckController {
   }
 
   async store(req: Request, res: Response) {
-    const { name, brand, model, year, capacity } = req.body;
+    const { plate, brand, model, year, capacity, driverId } = req.body;
     const createTruckDTO = new CreateTruckDTO();
-    createTruckDTO.name = name;
+    createTruckDTO.plate = plate;
     createTruckDTO.brand = brand;
     createTruckDTO.model = model;
     createTruckDTO.year = year;
     createTruckDTO.capacity = capacity;
+    createTruckDTO.driverId = driverId;
 
     const errors = await validate(createTruckDTO);
     if (errors.length >= 1) {
@@ -69,11 +70,12 @@ class TruckController {
 
     try {
       const newTruck = truckRepository.create({
-        name,
+        plate,
         brand,
         model,
         year,
         capacity,
+        driver: driverId,
       });
       truckRepository.save(newTruck);
       return res.status(201).json({
@@ -90,14 +92,15 @@ class TruckController {
 
   async update(req: Request, res: Response) {
     const truckId = req.params.id;
-    const { name, brand, model, year, capacity } = req.body;
+    const { plate, brand, model, year, capacity, driverId } = req.body;
 
     const updateTruckDTO = new UpdateTruckDTO();
-    updateTruckDTO.name = name;
+    updateTruckDTO.plate = plate;
     updateTruckDTO.brand = brand;
     updateTruckDTO.model = model;
     updateTruckDTO.year = year;
     updateTruckDTO.capacity = capacity;
+    updateTruckDTO.driverId = driverId;
 
     const errors = await validate(updateTruckDTO);
     if (errors.length >= 1) {
@@ -122,11 +125,12 @@ class TruckController {
 
       const editedTruck = await truckRepository.save({
         id: Number(truckId),
-        name,
+        plate,
         brand,
         model,
         year,
         capacity,
+        driver: driverId,
       });
       return res.status(201).json({
         status: 'success',

@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import cargoController from './controllers/cargo.controller';
+import deliveryController from './controllers/delivery.controller';
 import driverController from './controllers/driver.controller';
 import regionController from './controllers/region.controller';
 import truckController from './controllers/truck.controller';
@@ -29,5 +30,11 @@ router.get('/drivers/:id', driverController.show);
 router.post('/driver', driverController.store);
 router.put('/driver/:id', driverController.update);
 router.delete('/driver/:id', driverController.delete);
+
+router.get('/deliveries', deliveryController.index);
+router.get('/deliveries/:id', deliveryController.show);
+router.post('/delivery', deliveryController.store);
+router.put('/delivery/:id', deliveryController.update);
+router.delete('/delivery/:id', deliveryController.delete);
 
 export default router;
