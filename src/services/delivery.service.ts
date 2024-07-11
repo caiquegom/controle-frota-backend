@@ -1,3 +1,4 @@
+import { MoreThan } from 'typeorm';
 import { CreateDeliveryDTO } from '../dto/delivery.dto';
 import { CargoType } from '../entities/cargo.entity';
 import { cargoRepository } from '../repositories/cargo.repository';
@@ -37,6 +38,21 @@ class DeliveryService {
 
     return isAvailable;
   }
+
+  async verifyIfTruckIsOnDelivery(truckId: number) {
+    const deliveriesWithTruck = await deliveryRepository.findOne({
+      where: {
+        deliveryDate: MoreThan(new Date()),
+        truck: {
+          id: truckId,
+        },
+      },
+    });
+
+    return !!deliveriesWithTruck;
+  }
+
+  async verifyDriverDeliveriesWithTruck() {}
 
   async createNewDeliveryObject(data: CreateDeliveryDTO) {
     const { tax } = await regionRepository.findOne({
