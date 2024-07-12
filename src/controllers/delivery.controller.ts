@@ -101,8 +101,18 @@ class DeliveryController {
         });
       }
 
-      const isTruckAvailable =
-        await deliveryService.verifyIfTruckIsOnDelivery(truckId);
+      const validationMessage = await deliveryService.validateDriverAndTruck(
+        driverId,
+        truckId,
+        destinyId,
+        deliveryDate,
+      );
+      if (validationMessage) {
+        return res.status(409).json({
+          status: 'error',
+          message: validationMessage,
+        });
+      }
 
       const deliveryObject =
         await deliveryService.createNewDeliveryObject(createDeliveryDTO);

@@ -3,6 +3,7 @@ import { Request, Response } from 'express';
 import { Not } from 'typeorm';
 import { CreateDriverDTO, UpdateDriverDTO } from '../dto/driver.dto';
 import { driverRepository } from '../repositories/driver.repository';
+import driverService from '../services/driver.service';
 import { formatValidatorErrors } from '../utils/dataValidation';
 
 class DriverController {
@@ -199,6 +200,14 @@ class DriverController {
         return res.status(404).json({
           status: 'error',
           message: 'Driver not found',
+        });
+      }
+
+      const canDeleteDriver = await driverService.canDelete(Number(driverId));
+      if (!canDeleteDriver) {
+        return res.status(409).json({
+          status: 'error',
+          message: 'Motorista está cadastrado em uma entrega',
         });
       }
 

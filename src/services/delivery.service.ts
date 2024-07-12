@@ -50,7 +50,7 @@ class DeliveryService {
       where: { id: 1 },
     });
 
-    if (truckLimitPerMonth === 0) return true;
+    if (truckLimitPerMonth === 0) return false;
 
     const truckMonthTripsAmount = await deliveryRepository.count({
       where: {
@@ -98,7 +98,7 @@ class DeliveryService {
       },
     });
 
-    if (driverLimitPerMonth === 0) return true;
+    if (driverLimitPerMonth === 0) return false;
 
     const driverTripsToRegionAmount = await deliveryRepository.count({
       where: {
@@ -154,21 +154,42 @@ class DeliveryService {
     return driverTripsWithTruckMonthAmount >= driverLimitPerTruck;
   }
 
-  // async validateDriverAndTruck(
-  //   driverId: number,
-  //   truckId: number,
-  //   destinyId: number,
-  // ): Promise<boolean> {
-  //   const isTruckOnAnotherDelivery =
-  //     await this.verifyIfTruckIsOnDelivery(truckId);
-  //   const canTruckDeliverThisMonth =
-  //     await this.verifyTruckSurpassedMonthTrips(truckId);
-  //   // const canDriverDeliverToRegion = await this.verifyDriverSurpassedDeliveriesToRegion(driverId, destinyId)
+  async validateDriverAndTruck(
+    driverId: number,
+    truckId: number,
+    destinyId: number,
+    deliveryDate: Date,
+  ): Promise<string> {
+    const isTruckOnAnotherDelivery =
+      await this.verifyIfTruckIsOnDelivery(truckId);
+    const canTruckDeliverThisMonth = await this.verifyTruckSurpassedMonthTrips(
+      truckId,
+      deliveryDate,
+    );
+    const canDriverDeliverToRegion =
+      await this.verifyDriverSurpassedDeliveriesToRegion(
+        driverId,
+        destinyId,
+        deliveryDate,
+      );
+    const canDriverDeliverWithTruck =
+      await this.verifyIfDriverSurpassedDeliveriesWithTruck(
+        driverId,
+        truckId,
+        deliveryDate,
+      );
 
-  //   // if () {
+    if (isTruckOnAnotherDelivery)
+      return 'Caminhão já está cadastrado em uma entrega';
+    if (canTruckDeliverThisMonth)
+      return 'Caminhão já atingiu o limite de entregas do mês';
+    if (canDriverDeliverToRegion)
+      return 'Motorista já atingiu o limite de entregas do mês para a região';
+    if (canDriverDeliverWithTruck)
+      return 'Motorista já atingiu o limite de entregas do mês com o caminhão';
 
-  //   // }
-  // }
+    return '';
+  }
 }
 
 export default new DeliveryService();

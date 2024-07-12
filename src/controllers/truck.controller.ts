@@ -3,6 +3,7 @@ import { Request, Response } from 'express';
 import { Not } from 'typeorm';
 import { CreateTruckDTO, UpdateTruckDTO } from '../dto/truck.dto';
 import { truckRepository } from '../repositories/truck.repository';
+import truckService from '../services/truck.service';
 import { formatValidatorErrors } from '../utils/dataValidation';
 
 class TruckController {
@@ -181,6 +182,14 @@ class TruckController {
         return res.status(404).json({
           status: 'error',
           message: 'Truck not found',
+        });
+      }
+
+      const canDeleteTruck = await truckService.canDelete(Number(truckId));
+      if (!canDeleteTruck) {
+        return res.status(409).json({
+          status: 'error',
+          message: 'Caminhão está cadastrado em uma entrega',
         });
       }
 

@@ -2,6 +2,7 @@ import { validate } from 'class-validator';
 import { Request, Response } from 'express';
 import { CreateRegionDTO, UpdateRegionDTO } from '../dto/region.dto';
 import { regionRepository } from '../repositories/region.repository';
+import regionsService from '../services/regions.service';
 import { formatValidatorErrors } from '../utils/dataValidation';
 
 class RegionController {
@@ -147,11 +148,18 @@ class RegionController {
         },
         withDeleted: false,
       });
-
       if (!region) {
         return res.status(404).json({
           status: 'error',
           message: 'Region not found',
+        });
+      }
+
+      const canDeleteRegion = await regionsService.canDelete(Number(regionId));
+      if (!canDeleteRegion) {
+        return res.status(409).json({
+          status: 'error',
+          message: 'Região está cadastrada em uma entrega',
         });
       }
 

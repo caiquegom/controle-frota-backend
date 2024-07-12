@@ -3,6 +3,7 @@ import { Request, Response } from 'express';
 import { IsNull } from 'typeorm';
 import { CreateCargoDTO, UpdateCargoDTO } from '../dto/cargo.dto';
 import { cargoRepository } from '../repositories/cargo.repository';
+import cargoService from '../services/cargo.service';
 import { formatValidatorErrors } from '../utils/dataValidation';
 
 class CargoController {
@@ -10,7 +11,7 @@ class CargoController {
     try {
       const cargosList = await cargoRepository.find({
         order: {
-          createdAt: "ASC"
+          createdAt: 'ASC',
         },
         relations: ['delivery'],
         withDeleted: false,
@@ -154,6 +155,14 @@ class CargoController {
         return res.status(404).json({
           status: 'error',
           message: 'Cargo not found',
+        });
+      }
+
+      const canDeleteCargo = await cargoService.canDelete(Number(cargoId));
+      if (!canDeleteCargo) {
+        return res.status(409).json({
+          status: 'error',
+          message: 'Carga está cadastrada em uma entrega',
         });
       }
 
