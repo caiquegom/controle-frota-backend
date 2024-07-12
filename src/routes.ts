@@ -8,7 +8,7 @@ import truckController from './controllers/truck.controller';
 
 const router = Router();
 
-router.get('/cargos/availables', cargoController.getNotDelivered);
+router.get('/cargos/availables', cargoController.getAvailables);
 router.get('/cargos', cargoController.index);
 router.get('/cargos/:id', cargoController.show);
 router.post('/cargo', cargoController.store);

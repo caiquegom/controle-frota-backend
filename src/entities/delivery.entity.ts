@@ -45,19 +45,19 @@ export class Delivery {
   @DeleteDateColumn()
   deletedAt: Date;
 
-  @ManyToOne(() => Region, (region) => region.deliveries)
+  @ManyToOne(() => Region, (region) => region.deliveries, { nullable: false })
   @JoinColumn({ name: 'destinyId' })
   destiny: Region;
 
-  @ManyToOne(() => Truck, (truck) => truck.deliveries)
+  @ManyToOne(() => Truck, (truck) => truck.deliveries, { nullable: false })
   @JoinColumn({ name: 'truckId' })
   truck: Truck;
 
-  @ManyToOne(() => Driver, (driver) => driver.deliveries)
+  @ManyToOne(() => Driver, (driver) => driver.deliveries, { nullable: false })
   @JoinColumn({ name: 'driverId' })
   driver: Driver;
 
-  @OneToOne(() => Cargo, (cargo) => cargo.deliveries)
+  @OneToOne(() => Cargo, (cargo) => cargo.delivery, { nullable: false })
   @JoinColumn({ name: 'cargoId' })
   cargo: Cargo;
 }

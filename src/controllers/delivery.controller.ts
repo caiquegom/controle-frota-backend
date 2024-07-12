@@ -2,6 +2,7 @@ import { validate } from 'class-validator';
 import { Request, Response } from 'express';
 import { CreateDeliveryDTO } from '../dto/delivery.dto';
 import { deliveryRepository } from '../repositories/delivery.repository';
+import cargoService from '../services/cargo.service';
 import deliveryService from '../services/delivery.service';
 import { formatValidatorErrors } from '../utils/dataValidation';
 
@@ -88,10 +89,18 @@ class DeliveryController {
     }
 
     try {
+      const isCargoAvailable = await cargoService.verifyIfIsOnDelivery(cargoId);
+
+      if (isCargoAvailable) {
+        return res.status(409).json({
+          status: 'error',
+          message: 'Carga está cadastrada em outra entrega',
+        });
+      }
+
       const deliveryObject =
         await deliveryService.createNewDeliveryObject(createDeliveryDTO);
       const newDelivery = deliveryRepository.create(deliveryObject);
-
       await deliveryRepository.save(newDelivery);
 
       return res.status(200).json({
@@ -99,6 +108,7 @@ class DeliveryController {
         data: newDelivery,
       });
     } catch (error) {
+      console.log(error);
       return res.status(500).json({
         status: 'error',
         message: 'Internal Server Error',

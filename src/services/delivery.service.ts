@@ -91,6 +91,7 @@ class DeliveryService {
   }
 
   async createNewDeliveryObject(data: CreateDeliveryDTO) {
+    const { cargoId, driverId, truckId, destinyId } = data;
     const { tax } = await regionRepository.findOne({
       where: { id: data.destinyId },
     });
@@ -102,15 +103,17 @@ class DeliveryService {
     const isValuable = totalValue > 30000;
     const isDangerous = cargoType === CargoType.FUEL;
 
-    const newDelivery = {
+    return {
       ...data,
       tax,
+      cargo: { id: cargoId },
+      driver: { id: driverId },
+      truck: { id: truckId },
+      destiny: { id: destinyId },
       totalValue,
       isValuable,
       isDangerous,
     };
-
-    return newDelivery;
   }
 }
 

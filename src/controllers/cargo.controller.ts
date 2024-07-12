@@ -3,11 +3,13 @@ import { Request, Response } from 'express';
 import { CreateCargoDTO, UpdateCargoDTO } from '../dto/cargo.dto';
 import { cargoRepository } from '../repositories/cargo.repository';
 import { formatValidatorErrors } from '../utils/dataValidation';
+import { IsNull } from 'typeorm';
 
 class CargoController {
   async index(req: Request, res: Response) {
     try {
       const cargosList = await cargoRepository.find({
+        relations: ['delivery'],
         withDeleted: false,
       });
       return res.status(200).json({
@@ -165,13 +167,15 @@ class CargoController {
     }
   }
 
-  async getNotDelivered(req: Request, res: Response) {
+  async getAvailables(req: Request, res: Response) {
     try {
       const cargosList = await cargoRepository.find({
-        relations: ['deliveries'],
+        relations: ['delivery'],
         where: {
           delivered: false,
-          deliveries: null,
+          delivery: {
+            id: IsNull()
+          },
         },
         withDeleted: false,
       });

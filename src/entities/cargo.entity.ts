@@ -42,5 +42,5 @@ export class Cargo {
   deletedAt: Date;
 
   @OneToOne(() => Delivery, (delivery) => delivery.cargo)
-  deliveries: Delivery[];
+  delivery: Delivery;
 }
