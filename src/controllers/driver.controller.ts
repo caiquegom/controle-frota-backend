@@ -210,7 +210,7 @@ class DriverController {
     }
   }
 
-  async getAvailableDrivers(req: Request, res: Response) {
+  async getAvailables(req: Request, res: Response) {
     try {
       const driversList = await driverRepository.find({
         withDeleted: false,

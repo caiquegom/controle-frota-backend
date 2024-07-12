@@ -197,7 +197,7 @@ class TruckController {
     }
   }
 
-  async getAvailableTrucks(req: Request, res: Response) {
+  async getAvailables(req: Request, res: Response) {
     try {
       const trucksList = await truckRepository.find({
         withDeleted: false,

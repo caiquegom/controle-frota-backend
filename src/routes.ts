@@ -21,14 +21,14 @@ router.post('/region', regionController.store);
 router.put('/region/:id', regionController.update);
 router.delete('/region/:id', regionController.delete);
 
-router.get('/trucks/availables', truckController.getAvailableTrucks);
+router.get('/trucks/availables', truckController.getAvailables);
 router.get('/trucks', truckController.index);
 router.get('/trucks/:id', truckController.show);
 router.post('/truck', truckController.store);
 router.put('/truck/:id', truckController.update);
 router.delete('/truck/:id', truckController.delete);
 
-router.get('/drivers/availables', driverController.getAvailableDrivers);
+router.get('/drivers/availables', driverController.getAvailables);
 router.get('/drivers', driverController.index);
 router.get('/drivers/:id', driverController.show);
 router.post('/driver', driverController.store);
