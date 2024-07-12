@@ -91,7 +91,7 @@ class DeliveryController {
       const deliveryObject =
         await deliveryService.createNewDeliveryObject(createDeliveryDTO);
       const newDelivery = deliveryRepository.create(deliveryObject);
-      console.log({ deliveryObject, newDelivery });
+
       await deliveryRepository.save(newDelivery);
 
       return res.status(200).json({

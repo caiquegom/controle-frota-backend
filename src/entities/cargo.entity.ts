@@ -29,8 +29,8 @@ export class Cargo {
   @Column({ type: 'text', nullable: true })
   description: string;
 
-  @OneToOne(() => Delivery, (delivery) => delivery.cargo)
-  deliveries: Delivery[];
+  @Column({ type: 'boolean', default: false })
+  delivered: boolean;
 
   @CreateDateColumn()
   createdAt: Date;
@@ -40,4 +40,7 @@ export class Cargo {
 
   @DeleteDateColumn()
   deletedAt: Date;
+
+  @OneToOne(() => Delivery, (delivery) => delivery.cargo)
+  deliveries: Delivery[];
 }

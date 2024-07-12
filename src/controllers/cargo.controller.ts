@@ -7,7 +7,9 @@ import { formatValidatorErrors } from '../utils/dataValidation';
 class CargoController {
   async index(req: Request, res: Response) {
     try {
-      const cargosList = await cargoRepository.find({ withDeleted: false });
+      const cargosList = await cargoRepository.find({
+        withDeleted: false,
+      });
       return res.status(200).json({
         status: 'success',
         data: cargosList,
@@ -154,6 +156,28 @@ class CargoController {
       return res.status(200).json({
         status: 'success',
         data: 'Cargo deleted',
+      });
+    } catch (err) {
+      return res.status(500).json({
+        status: 'error',
+        message: 'Internal Server Error',
+      });
+    }
+  }
+
+  async getNotDelivered(req: Request, res: Response) {
+    try {
+      const cargosList = await cargoRepository.find({
+        relations: ['deliveries'],
+        where: {
+          delivered: false,
+          deliveries: null,
+        },
+        withDeleted: false,
+      });
+      return res.status(200).json({
+        status: 'success',
+        data: cargosList,
       });
     } catch (err) {
       return res.status(500).json({

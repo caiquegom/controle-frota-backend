@@ -23,9 +23,6 @@ export class Driver {
   @Column({ type: 'varchar' })
   phone: string;
 
-  @OneToMany(() => Delivery, (delivery) => delivery.driver)
-  deliveries: Delivery[];
-
   @CreateDateColumn()
   createdAt: Date;
 
@@ -34,4 +31,7 @@ export class Driver {
 
   @DeleteDateColumn()
   deletedAt: Date;
+
+  @OneToMany(() => Delivery, (delivery) => delivery.driver)
+  deliveries: Delivery[];
 }
