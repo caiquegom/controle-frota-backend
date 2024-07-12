@@ -20,7 +20,7 @@ class RegionController {
     } catch (err) {
       return res.status(500).json({
         status: 'error',
-        message: 'Internal Server Error',
+        message: 'Erro interno no servidor',
       });
     }
   }
@@ -50,7 +50,7 @@ class RegionController {
     } catch (err) {
       return res.status(500).json({
         status: 'error',
-        message: 'Internal Server Error',
+        message: 'Erro interno no servidor',
       });
     }
   }
@@ -84,7 +84,7 @@ class RegionController {
     } catch (err) {
       return res.status(500).json({
         status: 'error',
-        message: 'Internal Server Error',
+        message: 'Erro interno no servidor',
       });
     }
   }
@@ -132,7 +132,7 @@ class RegionController {
     } catch (err) {
       return res.status(500).json({
         status: 'error',
-        message: 'Internal Server Error',
+        message: 'Erro interno no servidor',
       });
     }
   }
@@ -163,7 +163,7 @@ class RegionController {
     } catch (err) {
       return res.status(500).json({
         status: 'error',
-        message: 'Internal Server Error',
+        message: 'Erro interno no servidor',
       });
     }
   }
