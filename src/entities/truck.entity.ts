@@ -14,8 +14,8 @@ export class Truck {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'varchar' })
-  name: string;
+  @Column({ type: 'varchar', unique: true })
+  plate: string;
 
   @Column({ type: 'varchar' })
   brand: string;

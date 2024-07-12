@@ -7,7 +7,12 @@ import { formatValidatorErrors } from '../utils/dataValidation';
 class RegionController {
   async index(req: Request, res: Response) {
     try {
-      const regionList = await regionRepository.find({ withDeleted: false });
+      const regionList = await regionRepository.find({
+        order: {
+          id: 'ASC',
+        },
+        withDeleted: false,
+      });
       return res.status(200).json({
         status: 'success',
         data: regionList,
@@ -51,10 +56,11 @@ class RegionController {
   }
 
   async store(req: Request, res: Response) {
-    const { name, tax } = req.body;
+    const { name, tax, driverLimitPerMonth } = req.body;
     const createRegionDTO = new CreateRegionDTO();
     createRegionDTO.name = name;
     createRegionDTO.tax = tax;
+    createRegionDTO.driverLimitPerMonth = driverLimitPerMonth;
 
     const errors = await validate(createRegionDTO);
     if (errors.length >= 1) {
@@ -68,8 +74,9 @@ class RegionController {
       const newRegion = regionRepository.create({
         name,
         tax,
+        driverLimitPerMonth,
       });
-      regionRepository.save(newRegion);
+      await regionRepository.save(newRegion);
       return res.status(201).json({
         status: 'success',
         data: newRegion,
@@ -84,11 +91,12 @@ class RegionController {
 
   async update(req: Request, res: Response) {
     const regionId = req.params.id;
-    const { name, tax } = req.body;
+    const { name, tax, driverLimitPerMonth } = req.body;
 
     const updateRegionDTO = new UpdateRegionDTO();
     updateRegionDTO.name = name;
     updateRegionDTO.tax = tax;
+    updateRegionDTO.driverLimitPerMonth = driverLimitPerMonth;
 
     const errors = await validate(updateRegionDTO);
     if (errors.length >= 1) {
@@ -115,6 +123,7 @@ class RegionController {
         id: Number(regionId),
         name,
         tax,
+        driverLimitPerMonth,
       });
       return res.status(201).json({
         status: 'success',

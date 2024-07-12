@@ -3,7 +3,7 @@ import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 export class CreateTruckDTO {
   @IsNotEmpty()
   @IsString()
-  name: string;
+  plate: string;
 
   @IsNotEmpty()
   @IsString()
@@ -25,7 +25,7 @@ export class CreateTruckDTO {
 export class UpdateTruckDTO {
   @IsNotEmpty()
   @IsString()
-  name: string;
+  plate: string;
 
   @IsNotEmpty()
   @IsString()

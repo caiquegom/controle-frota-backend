@@ -20,8 +20,8 @@ export class Region {
   @Column({ type: 'float' })
   tax: number;
 
-  @OneToMany(() => Delivery, (delivery) => delivery.destiny)
-  deliveries: Delivery[];
+  @Column({ type: 'int' })
+  driverLimitPerMonth: number;
 
   @CreateDateColumn()
   createdAt: Date;
@@ -31,4 +31,7 @@ export class Region {
 
   @DeleteDateColumn()
   deletedAt: Date;
+
+  @OneToMany(() => Delivery, (delivery) => delivery.destiny)
+  deliveries: Delivery[];
 }

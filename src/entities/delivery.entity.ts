@@ -13,39 +13,10 @@ import { Driver } from './driver.entity';
 import { Region } from './region.entity';
 import { Truck } from './truck.entity';
 
-enum DeliveryStatus {
-  PENDING = 'PENDING',
-  IN_PROGRESS = 'IN_PROGRESS',
-  CANCELED = 'CANCELED',
-}
-
 @Entity('deliveries')
 export class Delivery {
   @PrimaryGeneratedColumn()
   id: number;
-
-  @ManyToOne(() => Region, (region) => region.deliveries)
-  @JoinColumn({ name: 'destiny_id' })
-  destiny: Region;
-
-  @ManyToOne(() => Truck, (truck) => truck.deliveries)
-  @JoinColumn({ name: 'truck_id' })
-  truck: Truck;
-
-  @ManyToOne(() => Driver, (driver) => driver.deliveries)
-  @JoinColumn({ name: 'driver_id' })
-  driver: Driver;
-
-  @OneToOne(() => Cargo, (cargo) => cargo.deliveries)
-  @JoinColumn({ name: 'cargo_id' })
-  cargo: Cargo;
-
-  @Column({
-    type: 'enum',
-    enum: DeliveryStatus,
-    default: DeliveryStatus.PENDING,
-  })
-  status: string;
 
   @Column({ type: 'float' })
   value: number;
@@ -59,15 +30,34 @@ export class Delivery {
   @Column({ type: 'boolean' })
   isValuable: boolean;
 
-  @CreateDateColumn()
-  createdAt: Date;
+  @Column({ type: 'boolean' })
+  isDangerous: boolean;
+
+  @Column({ type: 'boolean' })
+  hasInsurance: boolean;
 
   @Column({ type: 'timestamp' })
-  startedAt: Date;
+  deliveryDate: Date;
+
+  @CreateDateColumn()
+  createdAt: Date;
 
   @DeleteDateColumn()
   deletedAt: Date;
 
-  @Column({ type: 'timestamp' })
-  finishedAt: Date;
+  @ManyToOne(() => Region, (region) => region.deliveries, { nullable: false })
+  @JoinColumn({ name: 'destinyId' })
+  destiny: Region;
+
+  @ManyToOne(() => Truck, (truck) => truck.deliveries, { nullable: false })
+  @JoinColumn({ name: 'truckId' })
+  truck: Truck;
+
+  @ManyToOne(() => Driver, (driver) => driver.deliveries, { nullable: false })
+  @JoinColumn({ name: 'driverId' })
+  driver: Driver;
+
+  @OneToOne(() => Cargo, (cargo) => cargo.delivery, { nullable: false })
+  @JoinColumn({ name: 'cargoId' })
+  cargo: Cargo;
 }

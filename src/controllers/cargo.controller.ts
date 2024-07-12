@@ -3,11 +3,15 @@ import { Request, Response } from 'express';
 import { CreateCargoDTO, UpdateCargoDTO } from '../dto/cargo.dto';
 import { cargoRepository } from '../repositories/cargo.repository';
 import { formatValidatorErrors } from '../utils/dataValidation';
+import { IsNull } from 'typeorm';
 
 class CargoController {
   async index(req: Request, res: Response) {
     try {
-      const cargosList = await cargoRepository.find({ withDeleted: false });
+      const cargosList = await cargoRepository.find({
+        relations: ['delivery'],
+        withDeleted: false,
+      });
       return res.status(200).json({
         status: 'success',
         data: cargosList,
@@ -71,7 +75,7 @@ class CargoController {
         type,
         description,
       });
-      cargoRepository.save(newCargo);
+      await cargoRepository.save(newCargo);
       return res.status(201).json({
         status: 'success',
         data: newCargo,
@@ -154,6 +158,30 @@ class CargoController {
       return res.status(200).json({
         status: 'success',
         data: 'Cargo deleted',
+      });
+    } catch (err) {
+      return res.status(500).json({
+        status: 'error',
+        message: 'Internal Server Error',
+      });
+    }
+  }
+
+  async getAvailables(req: Request, res: Response) {
+    try {
+      const cargosList = await cargoRepository.find({
+        relations: ['delivery'],
+        where: {
+          delivered: false,
+          delivery: {
+            id: IsNull()
+          },
+        },
+        withDeleted: false,
+      });
+      return res.status(200).json({
+        status: 'success',
+        data: cargosList,
       });
     } catch (err) {
       return res.status(500).json({
