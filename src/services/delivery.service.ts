@@ -136,6 +136,8 @@ class DeliveryService {
       },
     });
 
+    if (driverLimitPerTruck === 0) return false;
+
     const driverTripsWithTruckMonthAmount = await deliveryRepository.count({
       where: {
         driver: {

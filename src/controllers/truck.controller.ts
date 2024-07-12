@@ -224,6 +224,23 @@ class TruckController {
       });
     }
   }
+
+  async getAmount(req: Request, res: Response) {
+    try {
+      const trucksCount = await truckRepository.count({
+        withDeleted: false,
+      });
+      return res.status(200).json({
+        status: 'success',
+        data: { amount: trucksCount },
+      });
+    } catch {
+      return res.status(500).json({
+        status: 'error',
+        message: 'Erro interno no servidor',
+      });
+    }
+  }
 }
 
 export default new TruckController();

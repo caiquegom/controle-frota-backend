@@ -22,6 +22,7 @@ router.put('/region/:id', regionController.update);
 router.delete('/region/:id', regionController.delete);
 
 router.get('/trucks/availables', truckController.getAvailables);
+router.get('/trucks/amount', truckController.getAmount);
 router.get('/trucks', truckController.index);
 router.get('/trucks/:id', truckController.show);
 router.post('/truck', truckController.store);
@@ -36,11 +37,10 @@ router.post('/driver', driverController.store);
 router.put('/driver/:id', driverController.update);
 router.delete('/driver/:id', driverController.delete);
 
-router.get('/deliveries/today', deliveryController.getToday);
+router.get('/deliveries/day', deliveryController.getOfDay);
 router.get('/deliveries', deliveryController.index);
 router.get('/deliveries/:id', deliveryController.show);
 router.post('/delivery', deliveryController.store);
-router.put('/delivery/:id', deliveryController.update);
 router.delete('/delivery/:id', deliveryController.delete);
 
 router.get('/settings', settingsController.show);
