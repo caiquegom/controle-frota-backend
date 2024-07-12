@@ -9,7 +9,7 @@ class RegionController {
     try {
       const regionList = await regionRepository.find({
         order: {
-          id: 'ASC',
+          createdAt: 'ASC',
         },
         withDeleted: false,
       });

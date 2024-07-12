@@ -9,6 +9,9 @@ class CargoController {
   async index(req: Request, res: Response) {
     try {
       const cargosList = await cargoRepository.find({
+        order: {
+          createdAt: "ASC"
+        },
         relations: ['delivery'],
         withDeleted: false,
       });

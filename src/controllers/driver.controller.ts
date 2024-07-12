@@ -8,7 +8,12 @@ import { formatValidatorErrors } from '../utils/dataValidation';
 class DriverController {
   async index(req: Request, res: Response) {
     try {
-      const driversList = await driverRepository.find({ withDeleted: false });
+      const driversList = await driverRepository.find({
+        order: {
+          createdAt: 'ASC',
+        },
+        withDeleted: false,
+      });
       return res.status(200).json({
         status: 'success',
         data: driversList,
@@ -220,6 +225,23 @@ class DriverController {
         data: driversList,
       });
     } catch (err) {
+      return res.status(500).json({
+        status: 'error',
+        message: 'Erro interno no servidor',
+      });
+    }
+  }
+
+  async getAmount(req: Request, res: Response) {
+    try {
+      const driversCount = await driverRepository.count({
+        withDeleted: false,
+      });
+      return res.status(200).json({
+        status: 'success',
+        data: { amount: driversCount },
+      });
+    } catch {
       return res.status(500).json({
         status: 'error',
         message: 'Erro interno no servidor',

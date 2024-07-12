@@ -29,12 +29,14 @@ router.put('/truck/:id', truckController.update);
 router.delete('/truck/:id', truckController.delete);
 
 router.get('/drivers/availables', driverController.getAvailables);
+router.get('/drivers/amount', driverController.getAmount);
 router.get('/drivers', driverController.index);
 router.get('/drivers/:id', driverController.show);
 router.post('/driver', driverController.store);
 router.put('/driver/:id', driverController.update);
 router.delete('/driver/:id', driverController.delete);
 
+router.get('/deliveries/today', deliveryController.getToday);
 router.get('/deliveries', deliveryController.index);
 router.get('/deliveries/:id', deliveryController.show);
 router.post('/delivery', deliveryController.store);

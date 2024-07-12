@@ -1,4 +1,5 @@
 import { validate } from 'class-validator';
+import { format } from 'date-fns';
 import { Request, Response } from 'express';
 import { CreateDeliveryDTO } from '../dto/delivery.dto';
 import { deliveryRepository } from '../repositories/delivery.repository';
@@ -10,7 +11,10 @@ class DeliveryController {
   async index(req: Request, res: Response) {
     try {
       const deliverysList = await deliveryRepository.find({
-        relations: ['driver', 'cargo', 'truck'],
+        order: {
+          createdAt: 'ASC',
+        },
+        relations: ['driver', 'cargo', 'truck', 'destiny'],
         withDeleted: false,
       });
       return res.status(200).json({
@@ -90,7 +94,6 @@ class DeliveryController {
 
     try {
       const isCargoAvailable = await cargoService.verifyIfIsOnDelivery(cargoId);
-
       if (isCargoAvailable) {
         return res.status(409).json({
           status: 'error',
@@ -98,8 +101,12 @@ class DeliveryController {
         });
       }
 
+      const isTruckAvailable =
+        await deliveryService.verifyIfTruckIsOnDelivery(truckId);
+
       const deliveryObject =
         await deliveryService.createNewDeliveryObject(createDeliveryDTO);
+
       const newDelivery = deliveryRepository.create(deliveryObject);
       await deliveryRepository.save(newDelivery);
 
@@ -119,6 +126,11 @@ class DeliveryController {
   async update(req: Request, res: Response) {}
 
   async delete(req: Request, res: Response) {}
+
+  async getToday(req: Request, res: Response) {
+    const todayDate = format(new Date(), "yyyy-MM-dd'T'00:00:00.000'Z'");
+    return res.status(200).json(todayDate);
+  }
 }
 
 export default new DeliveryController();

@@ -200,6 +200,9 @@ class TruckController {
   async getAvailables(req: Request, res: Response) {
     try {
       const trucksList = await truckRepository.find({
+        order: {
+          createdAt: 'ASC',
+        },
         withDeleted: false,
       });
       return res.status(200).json({
