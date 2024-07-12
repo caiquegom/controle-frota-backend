@@ -4,12 +4,10 @@ import {
   DeleteDateColumn,
   Entity,
   OneToMany,
-  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { Delivery } from './delivery.entity';
-import { Truck } from './truck.entity';
 
 @Entity('drivers')
 export class Driver {
@@ -27,9 +25,6 @@ export class Driver {
 
   @OneToMany(() => Delivery, (delivery) => delivery.driver)
   deliveries: Delivery[];
-
-  @OneToOne(() => Truck, (truck) => truck.driver)
-  truck: Truck[];
 
   @CreateDateColumn()
   createdAt: Date;

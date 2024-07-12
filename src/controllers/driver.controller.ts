@@ -95,7 +95,7 @@ class DriverController {
         phone,
       });
 
-      driverRepository.save(newDriver);
+      await driverRepository.save(newDriver);
 
       return res.status(201).json({
         status: 'success',
@@ -201,6 +201,23 @@ class DriverController {
       return res.status(200).json({
         status: 'success',
         data: 'Driver deleted',
+      });
+    } catch (err) {
+      return res.status(500).json({
+        status: 'error',
+        message: 'Internal Server Error',
+      });
+    }
+  }
+
+  async getAvailableDrivers(req: Request, res: Response) {
+    try {
+      const driversList = await driverRepository.find({
+        withDeleted: false,
+      });
+      return res.status(200).json({
+        status: 'success',
+        data: driversList,
       });
     } catch (err) {
       return res.status(500).json({

@@ -23,6 +23,9 @@ export class Region {
   @OneToMany(() => Delivery, (delivery) => delivery.destiny)
   deliveries: Delivery[];
 
+  @Column({ type: 'int' })
+  driverLimitPerMonth: number;
+
   @CreateDateColumn()
   createdAt: Date;
 

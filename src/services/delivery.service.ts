@@ -7,9 +7,8 @@ import { regionRepository } from '../repositories/region.repository';
 import { settingsRepository } from '../repositories/settings.repository';
 
 class DeliveryService {
-  async validateTruckMonthTrips(id: number) {
+  async verifyTruckMonthTrips(id: number) {
     let isAvailable = true;
-    let monthReference = null;
 
     const { truckLimitPerMonth } = await settingsRepository.findOne({
       where: { id: 1 },
@@ -26,10 +25,10 @@ class DeliveryService {
       withDeleted: false,
     });
 
-    monthReference = new Date(deliveries[0].deliveryDate).getMonth();
+    const monthReference = new Date(deliveries[0].deliveryDate).getMonth();
 
     for (let i = 0; i < truckLimitPerMonth - 1; i++) {
-      const deliveryMonth = new Date(deliveries[i].deliveryDate);
+      const deliveryMonth = new Date(deliveries[i].deliveryDate).getMonth();
 
       if (deliveryMonth !== monthReference) {
         isAvailable = false;
@@ -52,7 +51,44 @@ class DeliveryService {
     return !!deliveriesWithTruck;
   }
 
-  async verifyDriverDeliveriesWithTruck() {}
+  async verifyDriverDeliveryToRegion(driverId: number, destinyId: number) {
+    let isAvailable = true;
+
+    const { driverLimitPerMonth } = await regionRepository.findOne({
+      where: {
+        id: destinyId,
+      },
+    });
+    const deliveriesToRegion = await deliveryRepository.find({
+      order: {
+        deliveryDate: 'DESC',
+      },
+      where: {
+        driver: {
+          id: driverId,
+        },
+        destiny: {
+          id: destinyId,
+        },
+      },
+    });
+
+    const monthReference = new Date(
+      deliveriesToRegion[0].deliveryDate,
+    ).getMonth();
+
+    for (let i = 0; i < driverLimitPerMonth - 1; i++) {
+      const deliveryMonth = new Date(
+        deliveriesToRegion[i].deliveryDate,
+      ).getMonth();
+
+      if (deliveryMonth !== monthReference) {
+        isAvailable = false;
+      }
+    }
+
+    return isAvailable;
+  }
 
   async createNewDeliveryObject(data: CreateDeliveryDTO) {
     const { tax } = await regionRepository.findOne({

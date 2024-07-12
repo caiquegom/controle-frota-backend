@@ -71,7 +71,7 @@ class CargoController {
         type,
         description,
       });
-      cargoRepository.save(newCargo);
+      await cargoRepository.save(newCargo);
       return res.status(201).json({
         status: 'success',
         data: newCargo,

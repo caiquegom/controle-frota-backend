@@ -9,6 +9,10 @@ export class CreateRegionDTO {
   @Min(0)
   @Max(1)
   tax: number;
+
+  @IsNotEmpty()
+  @Min(0)
+  driverLimitPerMonth: number;
 }
 
 export class UpdateRegionDTO {
@@ -20,4 +24,8 @@ export class UpdateRegionDTO {
   @Min(0)
   @Max(1)
   tax: number;
+
+  @IsNotEmpty()
+  @Min(0)
+  driverLimitPerMonth: number;
 }

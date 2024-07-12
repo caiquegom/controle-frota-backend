@@ -29,7 +29,7 @@ export class Cargo {
   @Column({ type: 'text', nullable: true })
   description: string;
 
-  @OneToOne(() => Delivery, (delivery) => delivery.destiny)
+  @OneToOne(() => Delivery, (delivery) => delivery.cargo)
   deliveries: Delivery[];
 
   @CreateDateColumn()

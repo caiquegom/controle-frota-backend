@@ -1,5 +1,6 @@
 import { validate } from 'class-validator';
 import { Request, Response } from 'express';
+import { Not } from 'typeorm';
 import { CreateTruckDTO, UpdateTruckDTO } from '../dto/truck.dto';
 import { truckRepository } from '../repositories/truck.repository';
 import { formatValidatorErrors } from '../utils/dataValidation';
@@ -7,7 +8,9 @@ import { formatValidatorErrors } from '../utils/dataValidation';
 class TruckController {
   async index(req: Request, res: Response) {
     try {
-      const trucksList = await truckRepository.find({ withDeleted: false });
+      const trucksList = await truckRepository.find({
+        withDeleted: false,
+      });
       return res.status(200).json({
         status: 'success',
         data: trucksList,
@@ -51,14 +54,13 @@ class TruckController {
   }
 
   async store(req: Request, res: Response) {
-    const { plate, brand, model, year, capacity, driverId } = req.body;
+    const { plate, brand, model, year, capacity } = req.body;
     const createTruckDTO = new CreateTruckDTO();
     createTruckDTO.plate = plate;
     createTruckDTO.brand = brand;
     createTruckDTO.model = model;
     createTruckDTO.year = year;
     createTruckDTO.capacity = capacity;
-    createTruckDTO.driverId = driverId;
 
     const errors = await validate(createTruckDTO);
     if (errors.length >= 1) {
@@ -69,15 +71,26 @@ class TruckController {
     }
 
     try {
+      const truckByPlate = await truckRepository.findOne({
+        where: { plate },
+        withDeleted: false,
+      });
+      if (truckByPlate) {
+        return res.status(409).json({
+          status: 'error',
+          message: 'Placa já cadastrada',
+        });
+      }
+
       const newTruck = truckRepository.create({
         plate,
         brand,
         model,
         year,
         capacity,
-        driver: driverId,
       });
-      truckRepository.save(newTruck);
+
+      await truckRepository.save(newTruck);
       return res.status(201).json({
         status: 'success',
         data: newTruck,
@@ -92,7 +105,7 @@ class TruckController {
 
   async update(req: Request, res: Response) {
     const truckId = req.params.id;
-    const { plate, brand, model, year, capacity, driverId } = req.body;
+    const { plate, brand, model, year, capacity } = req.body;
 
     const updateTruckDTO = new UpdateTruckDTO();
     updateTruckDTO.plate = plate;
@@ -100,7 +113,6 @@ class TruckController {
     updateTruckDTO.model = model;
     updateTruckDTO.year = year;
     updateTruckDTO.capacity = capacity;
-    updateTruckDTO.driverId = driverId;
 
     const errors = await validate(updateTruckDTO);
     if (errors.length >= 1) {
@@ -116,6 +128,17 @@ class TruckController {
         withDeleted: false,
       });
 
+      const otherTruckByPlate = await truckRepository.findOne({
+        where: { plate, id: Not(Number(truckId)) },
+        withDeleted: false,
+      });
+      if (otherTruckByPlate) {
+        return res.status(409).json({
+          status: 'error',
+          message: 'Placa já cadastrada',
+        });
+      }
+
       if (!truck) {
         return res.status(404).json({
           status: 'error',
@@ -130,7 +153,6 @@ class TruckController {
         model,
         year,
         capacity,
-        driver: driverId,
       });
       return res.status(201).json({
         status: 'success',
@@ -171,6 +193,22 @@ class TruckController {
       return res.status(500).json({
         status: 'error',
         message: 'Internal Server Error',
+      });
+    }
+  }
+
+  async getAvailableTrucks(req: Request, res: Response) {
+    try {
+      const trucksList = await truckRepository.find({
+        withDeleted: false,
+      });
+      return res.status(200).json({
+        status: 'success',
+        data: trucksList,
+      });
+    } catch (err) {
+      return res.status(500).json({
+        message: err,
       });
     }
   }

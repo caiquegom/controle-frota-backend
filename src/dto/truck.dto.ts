@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 export class CreateTruckDTO {
   @IsNotEmpty()
@@ -20,10 +20,6 @@ export class CreateTruckDTO {
   @IsNotEmpty()
   @IsNumber()
   capacity: number;
-
-  @IsOptional()
-  @IsNumber()
-  driverId: number;
 }
 
 export class UpdateTruckDTO {
@@ -46,8 +42,4 @@ export class UpdateTruckDTO {
   @IsNotEmpty()
   @IsNumber()
   capacity: number;
-
-  @IsOptional()
-  @IsNumber()
-  driverId: number;
 }

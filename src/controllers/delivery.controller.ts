@@ -2,12 +2,14 @@ import { validate } from 'class-validator';
 import { Request, Response } from 'express';
 import { CreateDeliveryDTO } from '../dto/delivery.dto';
 import { deliveryRepository } from '../repositories/delivery.repository';
+import deliveryService from '../services/delivery.service';
 import { formatValidatorErrors } from '../utils/dataValidation';
 
 class DeliveryController {
   async index(req: Request, res: Response) {
     try {
       const deliverysList = await deliveryRepository.find({
+        relations: ['driver', 'cargo', 'truck'],
         withDeleted: false,
       });
       return res.status(200).json({
@@ -53,8 +55,15 @@ class DeliveryController {
   }
 
   async store(req: Request, res: Response) {
-    const { destinyId, truckId, driverId, cargoId, value, hasInsurance } =
-      req.body;
+    const {
+      destinyId,
+      truckId,
+      driverId,
+      cargoId,
+      value,
+      hasInsurance,
+      deliveryDate,
+    } = req.body;
     const deliveryAttributes = {
       destinyId,
       truckId,
@@ -62,6 +71,7 @@ class DeliveryController {
       cargoId,
       value,
       hasInsurance,
+      deliveryDate,
     };
 
     const createDeliveryDTO = new CreateDeliveryDTO();
@@ -78,9 +88,16 @@ class DeliveryController {
     }
 
     try {
-      // const isTruckAvailable = await deliveryService.validateTruckMonthTrips(
-      //   Number(truckId),
-      // );
+      const deliveryObject =
+        await deliveryService.createNewDeliveryObject(createDeliveryDTO);
+      const newDelivery = deliveryRepository.create(deliveryObject);
+      console.log({ deliveryObject, newDelivery });
+      await deliveryRepository.save(newDelivery);
+
+      return res.status(200).json({
+        status: 'success',
+        data: newDelivery,
+      });
     } catch (error) {
       return res.status(500).json({
         status: 'error',

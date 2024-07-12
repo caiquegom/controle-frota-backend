@@ -8,7 +8,10 @@ class SettingsController {
   async show(req: Request, res: Response) {
     try {
       const settings = await settingsRepository.findOne({ where: { id: 1 } });
-      return res.status(200).json(settings);
+      return res.status(200).json({
+        status: 'success',
+        data: settings,
+      });
     } catch (error) {
       return res.status(500).json({
         status: 'error',

@@ -3,21 +3,18 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
-  JoinColumn,
   OneToMany,
-  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { Delivery } from './delivery.entity';
-import { Driver } from './driver.entity';
 
 @Entity('trucks')
 export class Truck {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'varchar' })
+  @Column({ type: 'varchar', unique: true })
   plate: string;
 
   @Column({ type: 'varchar' })
@@ -40,10 +37,6 @@ export class Truck {
 
   @DeleteDateColumn()
   deletedAt: Date;
-
-  @OneToOne(() => Driver, (driver) => driver.truck, { nullable: true })
-  @JoinColumn({ name: 'driverId' })
-  driver: Driver;
 
   @OneToMany(() => Delivery, (delivery) => delivery.truck)
   deliveries: Delivery[];

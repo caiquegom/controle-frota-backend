@@ -1,4 +1,10 @@
-import { IsBoolean, IsNotEmpty, IsNumber } from 'class-validator';
+import {
+  IsBoolean,
+  IsDate,
+  IsDateString,
+  IsNotEmpty,
+  IsNumber,
+} from 'class-validator';
 
 export class CreateDeliveryDTO {
   @IsNotEmpty()
@@ -20,6 +26,10 @@ export class CreateDeliveryDTO {
   @IsNotEmpty()
   @IsNumber()
   value: number;
+
+  @IsNotEmpty()
+  @IsDateString()
+  deliveryDate: Date;
 
   @IsNotEmpty()
   @IsBoolean()
@@ -46,6 +56,10 @@ export class UpdateDeliveryDTO {
   @IsNotEmpty()
   @IsNumber()
   value: number;
+
+  @IsNotEmpty()
+  @IsDate()
+  deliveryDate: Date;
 
   @IsNotEmpty()
   @IsBoolean()
