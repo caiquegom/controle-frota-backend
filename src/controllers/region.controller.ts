@@ -2,6 +2,7 @@ import { validate } from 'class-validator';
 import { Request, Response } from 'express';
 import { CreateRegionDTO, UpdateRegionDTO } from '../dto/region.dto';
 import { regionRepository } from '../repositories/region.repository';
+import regionsService from '../services/regions.service';
 import { formatValidatorErrors } from '../utils/dataValidation';
 
 class RegionController {
@@ -9,7 +10,7 @@ class RegionController {
     try {
       const regionList = await regionRepository.find({
         order: {
-          id: 'ASC',
+          createdAt: 'ASC',
         },
         withDeleted: false,
       });
@@ -20,7 +21,7 @@ class RegionController {
     } catch (err) {
       return res.status(500).json({
         status: 'error',
-        message: 'Internal Server Error',
+        message: 'Erro interno no servidor',
       });
     }
   }
@@ -50,7 +51,7 @@ class RegionController {
     } catch (err) {
       return res.status(500).json({
         status: 'error',
-        message: 'Internal Server Error',
+        message: 'Erro interno no servidor',
       });
     }
   }
@@ -84,7 +85,7 @@ class RegionController {
     } catch (err) {
       return res.status(500).json({
         status: 'error',
-        message: 'Internal Server Error',
+        message: 'Erro interno no servidor',
       });
     }
   }
@@ -132,7 +133,7 @@ class RegionController {
     } catch (err) {
       return res.status(500).json({
         status: 'error',
-        message: 'Internal Server Error',
+        message: 'Erro interno no servidor',
       });
     }
   }
@@ -147,11 +148,18 @@ class RegionController {
         },
         withDeleted: false,
       });
-
       if (!region) {
         return res.status(404).json({
           status: 'error',
           message: 'Region not found',
+        });
+      }
+
+      const canDeleteRegion = await regionsService.canDelete(Number(regionId));
+      if (!canDeleteRegion) {
+        return res.status(409).json({
+          status: 'error',
+          message: 'Região está cadastrada em uma entrega',
         });
       }
 
@@ -163,7 +171,7 @@ class RegionController {
     } catch (err) {
       return res.status(500).json({
         status: 'error',
-        message: 'Internal Server Error',
+        message: 'Erro interno no servidor',
       });
     }
   }

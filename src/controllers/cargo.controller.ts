@@ -1,14 +1,18 @@
 import { validate } from 'class-validator';
 import { Request, Response } from 'express';
+import { IsNull } from 'typeorm';
 import { CreateCargoDTO, UpdateCargoDTO } from '../dto/cargo.dto';
 import { cargoRepository } from '../repositories/cargo.repository';
+import cargoService from '../services/cargo.service';
 import { formatValidatorErrors } from '../utils/dataValidation';
-import { IsNull } from 'typeorm';
 
 class CargoController {
   async index(req: Request, res: Response) {
     try {
       const cargosList = await cargoRepository.find({
+        order: {
+          createdAt: 'ASC',
+        },
         relations: ['delivery'],
         withDeleted: false,
       });
@@ -19,7 +23,7 @@ class CargoController {
     } catch (err) {
       return res.status(500).json({
         status: 'error',
-        message: 'Internal Server Error',
+        message: 'Erro interno no servidor',
       });
     }
   }
@@ -49,7 +53,7 @@ class CargoController {
     } catch (err) {
       return res.status(500).json({
         status: 'error',
-        message: 'Internal Server Error',
+        message: 'Erro interno no servidor',
       });
     }
   }
@@ -83,7 +87,7 @@ class CargoController {
     } catch (err) {
       return res.status(500).json({
         status: 'error',
-        message: 'Internal Server Error',
+        message: 'Erro interno no servidor',
       });
     }
   }
@@ -131,7 +135,7 @@ class CargoController {
     } catch (err) {
       return res.status(500).json({
         status: 'error',
-        message: 'Internal Server Error',
+        message: 'Erro interno no servidor',
       });
     }
   }
@@ -154,6 +158,14 @@ class CargoController {
         });
       }
 
+      const canDeleteCargo = await cargoService.canDelete(Number(cargoId));
+      if (!canDeleteCargo) {
+        return res.status(409).json({
+          status: 'error',
+          message: 'Carga está cadastrada em uma entrega',
+        });
+      }
+
       await cargoRepository.softDelete({ id: Number(cargoId) });
       return res.status(200).json({
         status: 'success',
@@ -162,7 +174,7 @@ class CargoController {
     } catch (err) {
       return res.status(500).json({
         status: 'error',
-        message: 'Internal Server Error',
+        message: 'Erro interno no servidor',
       });
     }
   }
@@ -174,7 +186,7 @@ class CargoController {
         where: {
           delivered: false,
           delivery: {
-            id: IsNull()
+            id: IsNull(),
           },
         },
         withDeleted: false,
@@ -186,7 +198,7 @@ class CargoController {
     } catch (err) {
       return res.status(500).json({
         status: 'error',
-        message: 'Internal Server Error',
+        message: 'Erro interno no servidor',
       });
     }
   }

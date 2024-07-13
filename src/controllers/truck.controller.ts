@@ -3,6 +3,7 @@ import { Request, Response } from 'express';
 import { Not } from 'typeorm';
 import { CreateTruckDTO, UpdateTruckDTO } from '../dto/truck.dto';
 import { truckRepository } from '../repositories/truck.repository';
+import truckService from '../services/truck.service';
 import { formatValidatorErrors } from '../utils/dataValidation';
 
 class TruckController {
@@ -18,7 +19,7 @@ class TruckController {
     } catch (err) {
       return res.status(500).json({
         status: 'error',
-        message: 'Internal Server Error',
+        message: 'Erro interno no servidor',
       });
     }
   }
@@ -48,7 +49,7 @@ class TruckController {
     } catch (err) {
       return res.status(500).json({
         status: 'error',
-        message: 'Internal Server Error',
+        message: 'Erro interno no servidor',
       });
     }
   }
@@ -98,7 +99,7 @@ class TruckController {
     } catch (err) {
       return res.status(500).json({
         status: 'error',
-        message: 'Internal Server Error',
+        message: 'Erro interno no servidor',
       });
     }
   }
@@ -161,7 +162,7 @@ class TruckController {
     } catch (err) {
       return res.status(500).json({
         status: 'error',
-        message: 'Internal Server Error',
+        message: 'Erro interno no servidor',
       });
     }
   }
@@ -184,6 +185,14 @@ class TruckController {
         });
       }
 
+      const canDeleteTruck = await truckService.canDelete(Number(truckId));
+      if (!canDeleteTruck) {
+        return res.status(409).json({
+          status: 'error',
+          message: 'Caminhão está cadastrado em uma entrega',
+        });
+      }
+
       await truckRepository.softDelete({ id: Number(truckId) });
       return res.status(200).json({
         status: 'success',
@@ -192,14 +201,17 @@ class TruckController {
     } catch (err) {
       return res.status(500).json({
         status: 'error',
-        message: 'Internal Server Error',
+        message: 'Erro interno no servidor',
       });
     }
   }
 
-  async getAvailableTrucks(req: Request, res: Response) {
+  async getAvailables(req: Request, res: Response) {
     try {
       const trucksList = await truckRepository.find({
+        order: {
+          createdAt: 'ASC',
+        },
         withDeleted: false,
       });
       return res.status(200).json({
@@ -209,6 +221,23 @@ class TruckController {
     } catch (err) {
       return res.status(500).json({
         message: err,
+      });
+    }
+  }
+
+  async getAmount(req: Request, res: Response) {
+    try {
+      const trucksCount = await truckRepository.count({
+        withDeleted: false,
+      });
+      return res.status(200).json({
+        status: 'success',
+        data: { amount: trucksCount },
+      });
+    } catch {
+      return res.status(500).json({
+        status: 'error',
+        message: 'Erro interno no servidor',
       });
     }
   }

@@ -3,12 +3,18 @@ import { Request, Response } from 'express';
 import { Not } from 'typeorm';
 import { CreateDriverDTO, UpdateDriverDTO } from '../dto/driver.dto';
 import { driverRepository } from '../repositories/driver.repository';
+import driverService from '../services/driver.service';
 import { formatValidatorErrors } from '../utils/dataValidation';
 
 class DriverController {
   async index(req: Request, res: Response) {
     try {
-      const driversList = await driverRepository.find({ withDeleted: false });
+      const driversList = await driverRepository.find({
+        order: {
+          createdAt: 'ASC',
+        },
+        withDeleted: false,
+      });
       return res.status(200).json({
         status: 'success',
         data: driversList,
@@ -16,7 +22,7 @@ class DriverController {
     } catch (err) {
       return res.status(500).json({
         status: 'error',
-        message: 'Internal Server Error',
+        message: 'Erro interno no servidor',
       });
     }
   }
@@ -46,7 +52,7 @@ class DriverController {
     } catch (err) {
       return res.status(500).json({
         status: 'error',
-        message: 'Internal Server Error',
+        message: 'Erro interno no servidor',
       });
     }
   }
@@ -104,7 +110,7 @@ class DriverController {
     } catch (err) {
       return res.status(500).json({
         status: 'error',
-        message: 'Internal Server Error',
+        message: 'Erro interno no servidor',
       });
     }
   }
@@ -174,7 +180,7 @@ class DriverController {
     } catch (err) {
       return res.status(500).json({
         status: 'error',
-        message: 'Internal Server Error',
+        message: 'Erro interno no servidor',
       });
     }
   }
@@ -197,6 +203,14 @@ class DriverController {
         });
       }
 
+      const canDeleteDriver = await driverService.canDelete(Number(driverId));
+      if (!canDeleteDriver) {
+        return res.status(409).json({
+          status: 'error',
+          message: 'Motorista está cadastrado em uma entrega',
+        });
+      }
+
       await driverRepository.softDelete({ id: Number(driverId) });
       return res.status(200).json({
         status: 'success',
@@ -205,12 +219,12 @@ class DriverController {
     } catch (err) {
       return res.status(500).json({
         status: 'error',
-        message: 'Internal Server Error',
+        message: 'Erro interno no servidor',
       });
     }
   }
 
-  async getAvailableDrivers(req: Request, res: Response) {
+  async getAvailables(req: Request, res: Response) {
     try {
       const driversList = await driverRepository.find({
         withDeleted: false,
@@ -222,7 +236,25 @@ class DriverController {
     } catch (err) {
       return res.status(500).json({
         status: 'error',
-        message: 'Internal Server Error',
+        message: 'Erro interno no servidor',
+      });
+    }
+  }
+
+  async getAmount(req: Request, res: Response) {
+    try {
+      const driversCount = await driverRepository.count({
+        withDeleted: false,
+      });
+
+      return res.status(200).json({
+        status: 'success',
+        data: { amount: driversCount },
+      });
+    } catch {
+      return res.status(500).json({
+        status: 'error',
+        message: 'Erro interno no servidor',
       });
     }
   }
