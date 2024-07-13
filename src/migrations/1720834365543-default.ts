@@ -4,6 +4,7 @@ export class Default1720834365543 implements MigrationInterface {
     name = 'Default1720834365543'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
+        await queryRunner.query(`CREATE TYPE "public"."cargos_type_enum" AS ENUM ('eletronic', 'fuel', 'other')`);
         await queryRunner.query(`CREATE TABLE "cargos" ("id" SERIAL NOT NULL, "name" character varying NOT NULL, "type" "public"."cargos_type_enum" NOT NULL, "description" text, "delivered" boolean NOT NULL DEFAULT false, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, CONSTRAINT "PK_052f813788106484e4ef7cd1745" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "drivers" ("id" SERIAL NOT NULL, "name" character varying NOT NULL, "email" character varying NOT NULL, "phone" character varying NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, CONSTRAINT "UQ_d4cfc1aafe3a14622aee390edb2" UNIQUE ("email"), CONSTRAINT "PK_92ab3fb69e566d3eb0cae896047" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "regions" ("id" SERIAL NOT NULL, "name" character varying NOT NULL, "tax" double precision NOT NULL, "driverLimitPerMonth" integer NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, CONSTRAINT "UQ_1eb9a8899a7db89f6ba473fd847" UNIQUE ("name"), CONSTRAINT "PK_4fcd12ed6a046276e2deb08801c" PRIMARY KEY ("id"))`);
@@ -27,6 +28,7 @@ export class Default1720834365543 implements MigrationInterface {
         await queryRunner.query(`DROP TABLE "regions"`);
         await queryRunner.query(`DROP TABLE "drivers"`);
         await queryRunner.query(`DROP TABLE "cargos"`);
+        await queryRunner.query(`DROP TYPE "public"."cargos_type_enum"`);
     }
 
 }
