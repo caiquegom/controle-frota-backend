@@ -50,6 +50,7 @@ class DeliveryService {
       where: { id: 1 },
     });
 
+    console.log('entrou');
     if (truckLimitPerMonth === 0) return false;
 
     const truckMonthTripsAmount = await deliveryRepository.count({
@@ -164,10 +165,11 @@ class DeliveryService {
   ): Promise<string> {
     const isTruckOnAnotherDelivery =
       await this.verifyIfTruckIsOnDelivery(truckId);
-    const canTruckDeliverThisMonth = await this.verifyTruckSurpassedMonthTrips(
-      truckId,
-      deliveryDate,
-    );
+      
+      const canTruckDeliverThisMonth = await this.verifyTruckSurpassedMonthTrips(
+        truckId,
+        deliveryDate,
+      );
     const canDriverDeliverToRegion =
       await this.verifyDriverSurpassedDeliveriesToRegion(
         driverId,

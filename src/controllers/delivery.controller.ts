@@ -127,7 +127,7 @@ class DeliveryController {
     } catch (error) {
       return res.status(500).json({
         status: 'error',
-        message: 'Erro interno no servidor',
+        message: { error },
       });
     }
   }
@@ -178,10 +178,12 @@ class DeliveryController {
         withDeleted: false,
       });
 
-      return res.status(200).json({
-        status: 'success',
-        data: deliveriesByDate,
-      });
+      setTimeout(() => {
+        return res.status(200).json({
+          status: 'success',
+          data: deliveriesByDate,
+        });
+      }, 1000);
     } catch (error) {
       return res.status(500).json({
         status: 'error',
